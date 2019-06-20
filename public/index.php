@@ -4,6 +4,17 @@
  */
 $reposRoot = '/mnt/hgfs/code/repos.adeaz.com/repos';
 
+$user = $_SERVER["PHP_AUTH_USER"] ?: null;
+$password = $_SERVER["PHP_AUTH_PW"] ?: null;
+
+$users = file("../users.txt");
+$users = array_map("trim", $users);
+if (!in_array("$user:$password", $users)) {
+    header('WWW-Authenticate: Basic realm="git"');
+    header("HTTP/1.1 401");
+    return;
+}
+
 $env = [
     "PATH" => getenv("PATH"),
     "REQUEST_METHOD" => $_SERVER["REQUEST_METHOD"],
